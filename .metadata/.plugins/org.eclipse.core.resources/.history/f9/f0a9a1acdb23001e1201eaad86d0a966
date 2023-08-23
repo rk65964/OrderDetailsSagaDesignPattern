@@ -1,0 +1,49 @@
+package com.javatechie.saga.service;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.javatechie.saga.commons.dto.OrderRequestDto;
+import com.javatechie.saga.commons.event.OrderStatus;
+import com.javatechie.saga.entity.PurchaseOrder;
+import com.javatechie.saga.repository.OrderRepository;
+
+@Service
+public class OrderService {
+
+	@Autowired
+	private OrderRepository orderRepository;
+
+	@Autowired
+	private OrderStausPublisher orderStausPublisher;
+
+	@Transactional // this code exe in transaction
+	public PurchaseOrder creatOrder(OrderRequestDto orderRequestDto) {
+		PurchaseOrder order = orderRepository.save(convertDtoToEntity(orderRequestDto));
+		orderRequestDto.setOrderId(order.getId());
+
+		// produce kafka event with status orderCreated
+		orderStausPublisher.publishOrderEvent(orderRequestDto, OrderStatus.ORDER_CREATED);
+		return order;
+	}
+
+	private PurchaseOrder convertDtoToEntity(OrderRequestDto orderRequestDto) {
+		PurchaseOrder purchaseOrde = new PurchaseOrder();
+		purchaseOrde.setProductId(orderRequestDto.getProductId());
+		purchaseOrde.setUserId(orderRequestDto.getUserId());
+		// purchaseOrde.setOrderId(orderRequestDto.getOrderId());
+		purchaseOrde.setOrderStatus(OrderStatus.ORDER_CREATED);
+		purchaseOrde.setPrice(orderRequestDto.getAmount());
+		return purchaseOrde;
+	}
+
+	public List<PurchaseOrder> getAllOrders() {
+		return orderRepository.findAll();
+
+	}
+
+}

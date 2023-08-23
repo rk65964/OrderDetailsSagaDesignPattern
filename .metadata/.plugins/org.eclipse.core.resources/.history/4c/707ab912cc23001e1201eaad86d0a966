@@ -1,0 +1,21 @@
+package com.javatechie.saga.config;
+
+import java.util.function.Function;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Configuration
+public class PaymentConsumerConfig {
+
+	@Bean
+	public Function<Flux<OrderEvent>, Flux<PaymentEvent>> paymentProcessor() {
+        return orderEventFlux -> orderEventFlux.flatMap(this::paymentProcessor);
+    }
+	
+	private Mono<PaymentEvent>
+}

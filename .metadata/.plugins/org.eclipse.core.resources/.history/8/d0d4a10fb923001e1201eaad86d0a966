@@ -1,0 +1,24 @@
+package com.javatechie.saga.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.invocation.reactive.SyncHandlerMethodArgumentResolver;
+import org.springframework.stereotype.Service;
+
+
+import reactor.core.publisher.Sinks;
+
+@Service
+public class OrderStausPublisher {
+	
+	//Sinks is a publisher which help to emmit the events(WebFlux)
+
+	
+	//Sinks want to publish OrderEvent to kafka
+	@Autowired
+	private Sinks.Many<OrderEvent> orderSink;
+	
+	public void publishOrderEvents(OrderRequestDto orderRequestDto, Orderstatus orderstatus) {
+		OrderEvent orderEvent = new OrderEvent(orderRequestDto, orderstatus);
+		orderSink.tryEmitNext(orderEvent);
+	}
+}

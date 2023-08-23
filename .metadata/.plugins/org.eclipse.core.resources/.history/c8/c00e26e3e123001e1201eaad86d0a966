@@ -1,0 +1,9 @@
+package com.javatechie.saga.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.javatechie.saga.entity.UserBalance;
+
+public interface UserBalanceRepository extends JpaRepository<UserBalance, Integer>{
+
+}

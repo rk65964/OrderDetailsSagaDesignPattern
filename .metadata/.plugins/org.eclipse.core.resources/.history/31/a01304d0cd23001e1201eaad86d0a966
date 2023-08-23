@@ -1,0 +1,8 @@
+package com.javatechie.saga.config;
+
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class EventConsumerConfig {
+
+}
